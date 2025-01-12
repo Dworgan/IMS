@@ -21,7 +21,7 @@
 			{
 				<InventoryListItemComponent Inventory="inventory" />
 			}
-			
+
 		}
 	</tbody>
 
@@ -31,8 +31,11 @@
 {
 	private List<Inventory>? _inventories;
 
+	[Parameter]
+	public string? SearchInventoryFilter { get; set; }
+
 	protected override async Task OnInitializedAsync()
 	{
-		_inventories = (await ViewInventoriesByNameUseCases.ExecuteAsync()).ToList();
+		_inventories = (await ViewInventoriesByNameUseCases.ExecuteAsync(SearchInventoryFilter??string.Empty)).ToList();
 	}
 }

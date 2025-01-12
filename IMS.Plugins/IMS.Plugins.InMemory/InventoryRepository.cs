@@ -33,10 +33,33 @@ namespace IMS.Plugins.InMemory
 
         }
 
+        public Task UpdateInventoryAsync(Inventory inventory)
+        {
+            if(_inventories.Any(x => x.InventoryId != inventory.InventoryId 
+                                && x.InventoryName.Equals(inventory.InventoryName, StringComparison.OrdinalIgnoreCase)))
+            {
+                return Task.CompletedTask;
+            }
+            var invToUpdate = _inventories.FirstOrDefault(x => x.InventoryId == inventory.InventoryId);
+            if(invToUpdate != null)
+            {
+                invToUpdate.InventoryName = inventory.InventoryName;
+                invToUpdate.Quantity = inventory.Quantity;
+                invToUpdate.Price = inventory.Price;
+            }
+            return Task.CompletedTask;
+        }
+
         public async Task<IEnumerable<Inventory>> GetInventoriesByName(string name)
         {
             if (string.IsNullOrEmpty(name)) return await Task.FromResult(_inventories);
             return _inventories.Where(x => x.InventoryName.Contains(name,StringComparison.OrdinalIgnoreCase));
+        }
+
+        public async Task<Inventory> GetInventoryByIdAsync(int inventoryId)
+        {
+            var inv = _inventories.FirstOrDefault(x => x.InventoryId == inventoryId);
+            return await Task.FromResult(inv);
         }
     }
 }

@@ -1,0 +1,68 @@
+﻿@page "/editinventory/{invId:int}"
+@inject NavigationManager NavManager
+@inject IGetInventoryByIdUseCase GetInventoryByIdUseCase
+@inject IEditInventoryUseCase EditInventoryUseCase
+
+<h3>EditInventory</h3>
+<div class="mb-4"></div>
+@if(inventory is not null)
+{
+	<div class="d-flex">
+		<div class="flex-lg-shrink-0 mb-1">
+			<EditForm Model="inventory" FormName="formInventory" OnValidSubmit="Update">
+				<DataAnnotationsValidator />
+				<InputNumber @bind-Value="inventory.InventoryId" hidden/>  @*Hidden input to bind id to the form so it wont be 0 when you update*@
+
+				<div class="form-group">
+					<label for="name:">Inventory Name</label>
+					<InputText id="name"
+					@bind-Value="inventory.InventoryName"
+					class="form-control" />
+					<ValidationMessage For="()=>inventory.InventoryName" />
+				</div>
+				<div class="form-group">
+					<label for="quantity:">Quantity</label>
+					<InputNumber id="quantity"
+					@bind-Value="inventory.Quantity"
+					class="form-control" />
+					<ValidationMessage For="()=>inventory.Quantity" />
+				</div>
+				<div class="form-group">
+					<label for="price:">Price</label>
+					<InputNumber id="price"
+					@bind-Value="inventory.Price"
+					class="form-control" />
+					<ValidationMessage For="()=>inventory.Price" />
+				</div>
+
+				<button type="submit" class="btn btn-primary">Update</button>
+				<a href="/inventories" class="btn btn-secondary">Back</a>
+			</EditForm>
+		</div>
+	</div>
+}
+else
+{
+	<p>Inventory not found.</p>
+}
+@code {
+
+	[Parameter]
+	public int InvId { get; set; }
+	[SupplyParameterFromForm]
+	private Inventory? inventory{ get; set; } 
+
+	protected override async Task OnParametersSetAsync()
+	{
+		this.inventory ??= await GetInventoryByIdUseCase.ExecuteAsync(InvId);
+	}
+
+	private async Task Update()
+	{
+		if(inventory is not null)
+		{
+			await EditInventoryUseCase.ExecuteAsync(inventory);
+			NavManager.NavigateTo("/inventories");
+		}
+	}
+}

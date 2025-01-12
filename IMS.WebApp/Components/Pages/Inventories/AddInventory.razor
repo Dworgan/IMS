@@ -1,36 +1,45 @@
 ﻿@page "/addinventory"
 @inject IAddInventoryUseCase AddInventoryUseCase
+@inject NavigationManager NavManager
+
 
 <h3>Add Inventory</h3>
 <div class="mb-4"></div>
 <div class="d-flex">
 	<div class="flex-lg-shrink-0 mb-1">
 		<EditForm Model="inventory" FormName="formInventory" OnValidSubmit="Save">
+			<DataAnnotationsValidator/>
+
 			<div class="form-group">
 				<label for="name:">Inventory Name</label>
 				<InputText id="name"
 				@bind-Value="inventory.InventoryName"
 				class="form-control" />
+				<ValidationMessage For="()=>inventory.InventoryName"/>
 			</div>
 			<div class="form-group">
 				<label for="quantity:">Quantity</label>
 				<InputNumber id="quantity"
 				@bind-Value="inventory.Quantity"
 				class="form-control" />
+				<ValidationMessage For="()=>inventory.Quantity" />
 			</div>
 			<div class="form-group">
 				<label for="price:">Price</label>
 				<InputNumber id="price"
 				@bind-Value="inventory.Price"
 				class="form-control" />
+				<ValidationMessage For="()=>inventory.Price" />
 			</div>
 
 			<button type="submit" class="btn btn-primary">Save</button>
+			<a href="/inventories" class="btn btn-secondary">Back</a>
 		</EditForm>
 	</div>
 
 </div>
-<button onclick="Reset" class="btn btn-secondary">Reset</button>
+
+
 
 
 @code {
@@ -40,6 +49,7 @@
 	private async Task Save()
 	{
 		await AddInventoryUseCase.ExecuteAsync(inventory);
+		NavManager.NavigateTo("/inventories");
 	}
 	private void Reset()
 	{
