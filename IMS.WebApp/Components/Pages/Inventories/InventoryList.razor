@@ -3,15 +3,7 @@
 <h3>Inventory List</h3>
 <div class="mb-4"></div>
 
-<EditForm Model="inventoryNameToSearch" FormName="formSearchInv" class="mb-3">
-	<div class="input-group d-flex gap-3 ">
-		<InputText 
-			@bind-Value="inventoryNameToSearch"
-			class="form-control"
-			placeholder="Search for a inventory name..."/>
-			<button type="submit" class="btn btn-success input-group-text">Search</button>
-	</div>
-</EditForm>
+<SearchComponent OnSearch="HandleSearch" />
 
 <InventoryListComponent SearchInventoryFilter="@inventoryNameToSearch"/>
 <div class="mb-1"></div>
@@ -19,6 +11,9 @@
 
 
 @code {
-	[SupplyParameterFromForm]
-	private string inventoryNameToSearch { get; set; } = string.Empty;
+	private string? inventoryNameToSearch;
+	private void HandleSearch(string searchFilter)
+	{
+		inventoryNameToSearch = searchFilter;
+	}
 }

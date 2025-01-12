@@ -34,8 +34,9 @@
 	[Parameter]
 	public string? SearchInventoryFilter { get; set; }
 
-	protected override async Task OnInitializedAsync()
+	
+	protected override async Task OnParametersSetAsync()
 	{
-		_inventories = (await ViewInventoriesByNameUseCases.ExecuteAsync(SearchInventoryFilter??string.Empty)).ToList();
+		_inventories = (await ViewInventoriesByNameUseCases.ExecuteAsync(SearchInventoryFilter ?? string.Empty)).ToList();
 	}
 }

@@ -26,8 +26,15 @@ namespace IMS.Plugins.InMemory
             {
                 return Task.CompletedTask;
             }
-            var maxId = _inventories.Max(x => x.InventoryId);
-            inventory.InventoryId = maxId + 1;
+            if(_inventories.Count != 0)
+            {
+                var maxId = _inventories.Max(x => x.InventoryId);
+                inventory.InventoryId = maxId + 1;
+            }
+            else
+            {
+                inventory.InventoryId = 1;
+            }
             _inventories.Add(inventory);
             return Task.CompletedTask;
 
@@ -59,7 +66,20 @@ namespace IMS.Plugins.InMemory
         public async Task<Inventory> GetInventoryByIdAsync(int inventoryId)
         {
             var inv = _inventories.FirstOrDefault(x => x.InventoryId == inventoryId);
+            #pragma warning disable CS8603 // Possible null reference return.
             return await Task.FromResult(inv);
+            #pragma warning restore CS8603 // Possible null reference return.
+        }
+
+        public  Task RemoveInventoryAsync(int inventoryId)
+        {
+            var inv = _inventories.FirstOrDefault(x => x.InventoryId == inventoryId);
+            if (inv != null)
+            {
+                _inventories.Remove(inv);
+                return Task.CompletedTask;
+            }
+            return Task.CompletedTask;
         }
     }
 }

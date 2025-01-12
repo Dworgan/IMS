@@ -1,0 +1,42 @@
+﻿@inject IViewProductsByNameUseCases ViewProductsByNameUseCases
+
+
+<table class="table">
+	<thead>
+		<tr>
+			<th>Name</th>
+			<th>Quantity</th>
+			<th>Price</th>
+			<th></th>
+		</tr>
+	</thead>
+	<tbody>
+		@if (_products is null || _products.Count == 0)
+		{
+			<tr colspan="4"> There is no product available</tr>
+		}
+		else
+		{
+			@foreach (var product in _products)
+			{
+				<ProductListItemComponent Product="product" />
+			}
+
+		}
+	</tbody>
+
+</table>
+
+@code
+{
+	private List<Product>? _products;
+
+	[Parameter]
+	public string? SearchProductFilter { get; set; }
+
+	
+	protected override async Task OnParametersSetAsync()
+	{
+		_products = (await ViewProductsByNameUseCases.ExecuteAsync(SearchProductFilter ?? string.Empty)).ToList();
+	}
+}

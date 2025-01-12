@@ -1,21 +1,43 @@
-﻿@if(Inventory is not null)
+﻿@inject IRemoveInventoryUseCase RemoveInventoryUseCase
+@inject NavigationManager NavManager
+
+@if(Inventory is not null)
 {
 	<tr>
 		<td>@Inventory.InventoryName</td>
 		<td>@Inventory.Quantity</td>
 		<td>@Inventory.Price.ToString("c")</td>
 		<td>
+			<div class="d-flex gap-3">
 			<a class="btn btn-primary"
-				href="/editinventory/@Inventory.InventoryId">
+			href="/editinventory/@Inventory.InventoryId">
 				Edit
 			</a>
+			<EditForm 
+			Model="Inventory" 
+			Enhance ="true"
+			FormName="@($"form-remove-inventory-{@Inventory.InventoryId}")"
+			OnSubmit="() => RemoveInventory(Inventory.InventoryId)">
+				<button type="submit" class="btn btn-danger">Delete</button>
+			</EditForm>
+
+			</div>
 		</td>
 	</tr>
 
 }
+
 @code {
+	/*
+	@($"form-remove-inventory-{@Inventory.InventoryId}") = Explicit Razor Syntax....string interpolation
+	*/
+
 	[Parameter]
 	public Inventory? Inventory { get; set; }
 
-
+	private async Task RemoveInventory(int inventoryId)
+	{
+		await RemoveInventoryUseCase.ExecuteAsync(inventoryId);
+		NavManager.Refresh();
+	}
 }
