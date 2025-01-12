@@ -1,0 +1,61 @@
+﻿@inject IViewInventoriesByNameUseCases ViewInventoriesByNameUseCases
+
+<div class="input-group d-flex gap-3 ">
+	<input @bind-value="searchFilter" @bind-value:event="oninput"
+	class="form-control"
+	placeholder="Search here..." />
+	<button type="button" class="btn btn-success input-group-text" @onclick="HandleSearch">Search</button>
+</div>
+@if(inventories is not null && inventories.Count > 0)
+{
+	<div class="search-results">
+		<ul>
+			@foreach(var inv in inventories)
+			{
+				<li @key="inv.InventoryId"
+				@onclick="()=>{HandleSelectInventory(inv);}">
+					@inv.InventoryName
+				</li>
+			}
+		</ul>
+	</div>
+}
+@code {
+	/*
+	* li @key  helps with performance when you search or use interactivity
+	*/
+
+	[Parameter]
+	public EventCallback<Inventory> OnInventorySelected { get; set; }
+	private string _searchFilter = string.Empty;
+	private string searchFilter 
+	{
+		get => _searchFilter;
+		set
+		{
+			_searchFilter = value;
+			if(_searchFilter.Length> 2)
+			{
+				HandleSearch();//still calls the function async
+			}
+			else if (_searchFilter.Length ==0)
+			{
+				HandleSearch();
+			}
+
+		}
+	}
+	private List<Inventory> inventories = new();
+	private async Task HandleSearch()
+	{
+		await Task.Delay(1000); // simulate a relative long running db call
+		inventories = (await ViewInventoriesByNameUseCases.ExecuteAsync(searchFilter)).ToList();
+		StateHasChanged();//lets the ui know the state has changed so it needs to rerender
+	}
+
+	private async Task HandleSelectInventory(Inventory inventory)
+	{
+		await OnInventorySelected.InvokeAsync(inventory);
+		inventories.Clear();
+	}
+}

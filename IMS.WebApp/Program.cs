@@ -9,7 +9,8 @@ using IMS.WebApp.Components;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-builder.Services.AddRazorComponents();
+//builder.Services.AddRazorComponents(); = RazorSSR
+builder.Services.AddRazorComponents().AddInteractiveServerComponents(); // Server Interactivity
 /*
  * Inventory
  * */
@@ -25,8 +26,10 @@ builder.Services.AddTransient<IRemoveInventoryUseCase, RemoveInventoryUseCase>()
  * */
 builder.Services.AddSingleton<IProductRepository, ProductRepository>();
 builder.Services.AddTransient<IViewProductsByNameUseCases, ViewProductsByNameUseCases>();
-
-
+builder.Services.AddTransient<IAddProductUseCase, AddProductUseCase>();
+builder.Services.AddTransient<IEditProductUseCase, EditProductUseCase>();
+builder.Services.AddTransient<IGetProductByIdUseCase, GetProductByIdUseCase>();
+builder.Services.AddTransient<IRemoveProductUseCase, RemoveProductUseCase>();
 
 var app = builder.Build();
 
@@ -43,6 +46,7 @@ app.UseHttpsRedirection();
 app.UseStaticFiles();
 app.UseAntiforgery();
 
-app.MapRazorComponents<App>();
+//app.MapRazorComponents<App>() = RazorSSR
+app.MapRazorComponents<App>().AddInteractiveServerRenderMode(); // Server Interactivity
 
 app.Run();

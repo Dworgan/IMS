@@ -1,0 +1,14 @@
+﻿.search-results {
+    margin-top: 1rem;
+    overflow-y: auto;
+    max-height: 50px;
+    border: 1px solid silver;
+    border-radius: 4px;
+}
+div ul
+{
+    list-style-type:none;
+}
+div ul li{
+    cursor:pointer;
+}

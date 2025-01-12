@@ -1,4 +1,4 @@
-﻿
+﻿@inject IRemoveProductUseCase RemoveProductUseCase
 @inject NavigationManager NavManager
 
 @if(Product is not null)
@@ -9,18 +9,16 @@
 		<td>@Product.Price.ToString("c")</td>
 		<td>
 			<div class="d-flex gap-3">
-			<a class="btn btn-primary"
-				   href="/editinventory/@Product.ProductId">
-				Edit
-			</a>
-			
+				<a class="btn btn-primary"
+				href="/editinventory/@Product.ProductId">
+					Edit
+				</a>
+				<button type="button" class="btn btn-danger" @onclick="async () => { await HandleRemoveProduct(Product.ProductId); }">Delete</button>
 
 			</div>
 		</td>
 	</tr>
-
 }
-
 @code {
 	/*
 	@($"form-remove-inventory-{@Inventory.InventoryId}") = Explicit Razor Syntax....string interpolation
@@ -29,5 +27,9 @@
 	[Parameter]
 	public Product? Product { get; set; }
 
-	
+	private async Task HandleRemoveProduct(int productId)
+	{
+		await RemoveProductUseCase.ExecuteAsync(productId);
+		Product = null; // to update the ui part 
+	}
 }
